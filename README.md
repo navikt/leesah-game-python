@@ -36,7 +36,7 @@ Nedenfor er det et fungerende eksempel som svarer på lagregistreringsspørsmål
 import leesah
 
 TEAM_NAME = "CHANGE ME"
-HEX_CODE = "#0DBABE"
+HEX_CODE = "CHANGE ME"
 
 
 def handle_questions(question: leesah.Question):
@@ -72,10 +72,10 @@ python3 -m venv venv
 .\venv\Scripts\activate
 ```
 
-Er kun en avhengighet du trenger, og det er [leesah](https://pypi.org/project/leesah/).
+Er kun en avhengighet du trenger, og det er [leesah-game](https://pypi.org/project/leesah-game/).
 
 ```shell
-python3 -m pip install leesah
+python3 -m pip install leesah-game # import leesah
 ```
 
 Kjør koden din med:
