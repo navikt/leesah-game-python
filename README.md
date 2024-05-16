@@ -9,13 +9,39 @@ Python-bibliotek for å spille LEESAH!
 ## Kom i gang
 
 Det finnes to versjoner av Leesah-game!
-En hvor man lager en applikasjon som kjører på Nais, og en hvor man spiller lokalt direkte fra terminalen sin.
-Dette biblioteket kan brukes i begge versjoner, men denne dokumentasjonen dekker kun lokal spilling.
-Vi har et eget template-repo som ligger under [navikt/leesah-game-template-go](https://github.com/navikt/leesah-game-template-go) for å spille Nais-versjonen.
+En hvor man lager en applikasjon som kjører på Nais, og en hvor man spiller lokalt direkte fra terminalen.
+Dette biblioteket kan brukes i begge versjoner, men denne dokumentasjonen dekker **kun** lokal spilling.
 
-### Hent credentials
+### Sett opp lokalt miljø
+
+Vi anbefaler at du bruker et virtuelt miljø for å kjøre koden din, som for eksempel [Venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
+
+**For macOS/Linux**
+```shell
+cd leesah-game
+python3 -m venv venv
+source ./venv/bin/activate
+```
+
+**For Windows**
+```shell
+cd leesah-game
+python3 -m venv venv
+.\venv\Scripts\activate
+```
+
+### Installer biblioteket
+
+Det er kun en avhengighet du trenger, og det er biblioteket [leesah-game](https://pypi.org/project/leesah-game/).
+
+```shell
+python3 -m pip install leesah-game # import leesah
+```
+
+### Hent Kafkasertifikat
 
 Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-game-cert.ekstern.dev.nav.no/certs](https://leesah-game-cert.ekstern.dev.nav.no/certs), brukernavn og passord skal du få utdelt.
+
 Du kan også bruke kommandoen nedenfor:
 
 ```bash
@@ -24,7 +50,7 @@ wget --user <username> --password <password> -O leesah-creds.zip https://leesah-
 
 ### Eksempelkode
 
-Nedenfor er det et fungerende eksempel som svarer på lagregistreringsspørsmålet med et navn du velger, og en farge du velger:
+Nedenfor er et fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode):
 
 ```python
 """The Leesah quiz game client.
@@ -54,29 +80,7 @@ rapid.run(handle_questions)
 
 ```
 
-## Kjør lokalt
-
-Vi anbefaler at du bruker et virtuelt miljø for å kjøre koden din, som for eksempel [Venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
-
-**For macOS/Linux**
-```shell
-cd leesah-game-starter
-python3 -m venv venv
-source ./venv/bin/activate
-```
-
-**For Windows**
-```shell
-cd leesah-game-starter
-python3 -m venv venv
-.\venv\Scripts\activate
-```
-
-Er kun en avhengighet du trenger, og det er [leesah-game](https://pypi.org/project/leesah-game/).
-
-```shell
-python3 -m pip install leesah-game # import leesah
-```
+### Kjør koden
 
 Kjør koden din med:
 
