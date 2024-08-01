@@ -3,8 +3,12 @@
 
 def base_config(creds: dict) -> dict:
     """Create a base configuration for Kafka clients."""
+    broker = creds["broker"]
+    if ":" not in broker:
+        broker += ":26484"
+
     return {
-        "bootstrap.servers": creds["broker"],
+        "bootstrap.servers": broker,
         "security.protocol": "SSL",
         "ssl.ca.pem": creds["ca"],
         "ssl.key.pem": creds['user']["access_key"],
