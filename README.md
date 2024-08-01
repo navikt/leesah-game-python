@@ -74,7 +74,7 @@ def handle_questions(question: leesah.Question):
     print(f"Received question: {question}")
     if question.kategorinavn == "team-registration":
         raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
-        // return HEX_CODE
+        # return HEX_CODE
 
 
 rapid = leesah.QuizRapid(TEAM_NAME)
