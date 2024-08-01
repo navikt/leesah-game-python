@@ -96,15 +96,15 @@ class QuizRapid:
 
         try:
             if msg["type"] == TYPE_QUESTION:
-                question = Question(category=msg['category'],
-                                    question=msg['question'])
+                question = Question(kategorinavn=msg['kategorinavn'],
+                                    spørsmål=msg['spørsmål'])
                 answer_string = question_handler(question)
 
                 if answer_string:
-                    answer = Answer(questionId=msg['messageId'],
-                                    category=msg['category'],
-                                    teamName=self._team_name,
-                                    answer=answer_string)
+                    answer = Answer(spørsmålId=msg['spørsmålId'],
+                                    kategorinavn=msg['kategorinavn'],
+                                    lagnavn=self._team_name,
+                                    spørsmål=answer_string)
                     print(f"publishing answer: {answer}")
                     value = json.dumps(answer.model_dump()).encode("utf-8")
                     self._producer.produce(topic=self._topic,

@@ -58,6 +58,7 @@ Nedenfor er et fungerende eksempel som svarer på spørsmålet om lagregistrerin
 # 1. Ensure credential files are in the certs directory
 # 2. Set `TEAM_NAME` to your preferred team name
 # 3. Set `HEX_CODE` to your preferred team color
+# 4. Remove the `NotImplementedError` and return your hex code
 """
 import leesah
 
@@ -71,13 +72,13 @@ def handle_questions(question: leesah.Question):
     The return value is your answer to the question.
     """
     print(f"Received question: {question}")
-    if question.category == "team-registration":
-        return HEX_CODE
+    if question.kategorinavn == "team-registration":
+        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
+        // return HEX_CODE
 
 
 rapid = leesah.QuizRapid(TEAM_NAME)
 rapid.run(handle_questions)
-
 ```
 
 ### Kjør koden
