@@ -15,10 +15,8 @@ class Answer(BaseModel):
     spørsmålId: str
     kategorinavn: str
     lagnavn: str = ""
-    spørsmål: str = ""
-    opprettet: str = datetime.now().isoformat()
+    svar: str = ""
     svarId: str = str(uuid.uuid4())
-    type: str = TYPE_ANSWER
 
 
 class Question(BaseModel):

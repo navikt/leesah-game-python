@@ -4,6 +4,7 @@ import uuid
 import os
 import yaml
 
+from datetime import datetime
 from pathlib import Path
 from yaml.loader import SafeLoader
 from json import JSONDecodeError
@@ -91,11 +92,11 @@ class QuizRapid:
         try:
             msg = json.loads(msg.value().decode("utf-8"))
         except JSONDecodeError as e:
-            print(f"error: could not parse message: {msg.value()} error: {e}")
+            print(f"error: could not parse message: {msg.value()}, error: {e}")
             return
 
         try:
-            if msg["type"] == TYPE_QUESTION:
+            if msg["@event_name"] == TYPE_QUESTION:
                 question = Question(kategorinavn=msg['kategorinavn'],
                                     spørsmål=msg['spørsmål'])
                 answer_string = question_handler(question)
@@ -104,13 +105,15 @@ class QuizRapid:
                     answer = Answer(spørsmålId=msg['spørsmålId'],
                                     kategorinavn=msg['kategorinavn'],
                                     lagnavn=self._team_name,
-                                    spørsmål=answer_string)
+                                    svar=answer_string).model_dump()
+                    answer["@opprettet"] = datetime.now().isoformat()
+                    answer["@event_name"] = "SVAR"
                     print(f"publishing answer: {answer}")
-                    value = json.dumps(answer.model_dump()).encode("utf-8")
+                    value = json.dumps(answer).encode("utf-8")
                     self._producer.produce(topic=self._topic,
                                            value=value)
         except KeyError as e:
-            print(f"error: could not parse message: {msg} error: {e}")
+            print(f"error: unknown message: {msg}, missing key: {e}")
 
     def close(self):
         """Close the QuizRapid."""
