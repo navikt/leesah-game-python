@@ -43,7 +43,14 @@ class QuizRapid:
             auto_commit : bool, optional
                 auto commit offset for the consumer (default is False)
         """
-        creds = yaml.load(Path(path_to_cert).open(mode="r").read(),
+        cert_path = Path(path_to_cert)
+        if not cert_path.exists():
+            if Path("student-certs.yaml").exists():
+                cert_path = Path("student-certs.yaml")
+            else:
+                raise FileNotFoundError(f"Could not find cert file in: {path_to_cert} or {cert_path}")
+
+        creds = yaml.load(cert_path.open(mode="r").read(),
                           Loader=SafeLoader)
         if not topic:
             self._topic = creds["topics"][0]
