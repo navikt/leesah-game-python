@@ -69,22 +69,22 @@ class QuizRapid:
         self._producer: Producer = producer
         self._consumer: Consumer = consumer
 
-    def run(self, question_handler):
-        """Run the QuizRapid."""
         print("🚀 Starting QuizRapid...")
-        try:
-            while self.running:
-                msg = self._consumer.poll(timeout=1)
-                if msg is None:
-                    continue
+        print("🔍 looking for first question")
 
-                if msg.error():
-                    self._handle_error(msg)
-                else:
-                    self._handle_message(msg, question_handler)
+    def get_question(self):
+        """Get a question from the quiz rapid."""
+        while self.running:
+            msg = self._consumer.poll(timeout=1)
+            if msg is None:
+                continue
 
-        finally:
-            self.close()
+            if msg.error():
+                self._handle_error(msg)
+            else:
+                question = self._handle_message(msg)
+                if question:
+                    return question
 
     def _handle_error(self, msg):
         """Handle errors from the consumer."""
@@ -94,7 +94,7 @@ class QuizRapid:
         elif msg.error():
             raise KafkaException(msg.error())
 
-    def _handle_message(self, msg, question_handler):
+    def _handle_message(self, msg):
         """Handle messages from the consumer."""
         try:
             msg = json.loads(msg.value().decode("utf-8"))
@@ -104,21 +104,29 @@ class QuizRapid:
 
         try:
             if msg["@event_name"] == TYPE_QUESTION:
-                question = Question(kategorinavn=msg['kategorinavn'],
-                                    spørsmål=msg['spørsmål'])
-                answer_string = question_handler(question)
+                self._last_message = msg
+                return Question(kategorinavn=msg['kategorinavn'],
+                                spørsmål=msg['spørsmål'],
+                                svarformat=msg['svarformat'])
+        except KeyError as e:
+            print(f"error: unknown message: {msg}, missing key: {e}")
+            return
 
-                if answer_string:
-                    answer = Answer(spørsmålId=msg['spørsmålId'],
-                                    kategorinavn=msg['kategorinavn'],
-                                    lagnavn=self._team_name,
-                                    svar=answer_string).model_dump()
-                    answer["@opprettet"] = datetime.now().isoformat()
-                    answer["@event_name"] = "SVAR"
-                    print(f"publishing answer: {answer}")
-                    value = json.dumps(answer).encode("utf-8")
-                    self._producer.produce(topic=self._topic,
+    def answer(self, answer_string: str):
+        try:
+            if answer_string:
+                msg = self._last_message
+                answer = Answer(spørsmålId=msg['spørsmålId'],
+                                kategorinavn=msg['kategorinavn'],
+                                lagnavn=self._team_name,
+                                svar=answer_string).model_dump()
+                answer["@opprettet"] = datetime.now().isoformat()
+                answer["@event_name"] = "SVAR"
+                print(f"📤 publishing answer: {answer}")
+                value = json.dumps(answer).encode("utf-8")
+                self._producer.produce(topic=self._topic,
                                            value=value)
+                self._last_message = None
         except KeyError as e:
             print(f"error: unknown message: {msg}, missing key: {e}")
 

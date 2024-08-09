@@ -66,19 +66,23 @@ TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME"
 
 
-def handle_questions(question: leesah.Question):
-    """Call when a question is received from the stream.
+class Rapid(leesah.QuizRapid):
 
-    The return value is your answer to the question.
-    """
-    print(f"Received question: {question}")
-    if question.kategorinavn == "team-registration":
-        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
-        # return HEX_CODE
+    def run(self):
+        while True:
+            question = self.get_question()
+            print(f"Received question: {question}")
+            if question.kategorinavn == "team-registration":
+                raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
+				# self.handle_register_team()
+
+    def handle_register_team(self):
+        self.answer(HEX_CODE)
 
 
-rapid = leesah.QuizRapid(TEAM_NAME)
-rapid.run(handle_questions)
+if __name__ == "__main__":
+    rapid = Rapid(TEAM_NAME)
+    rapid.run()
 ```
 
 ### Kjør koden
