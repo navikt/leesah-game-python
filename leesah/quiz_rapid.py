@@ -25,7 +25,7 @@ class QuizRapid:
                  topic: str = os.getenv("QUIZ_TOPIC"),
                  consumer_group_id: str = uuid.uuid4(),
                  path_to_cert: str = os.environ.get(
-                     'QUIZ_CERT', 'certs/student-certs.yaml'),
+                     'QUIZ_CERT', 'student-certs.yaml'),
                  auto_commit: bool = False,):
         """
         Construct all the necessary attributes for the QuizRapid object.
@@ -45,8 +45,8 @@ class QuizRapid:
         """
         cert_path = Path(path_to_cert)
         if not cert_path.exists():
-            if Path("student-certs.yaml").exists():
-                cert_path = Path("student-certs.yaml")
+            if Path("certs/student-certs.yaml").exists():
+                cert_path = Path("certs/student-certs.yaml")
             else:
                 raise FileNotFoundError(f"Could not find cert file in: {path_to_cert} or {cert_path}")
 
