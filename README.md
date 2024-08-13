@@ -40,17 +40,17 @@ python3 -m pip install leesah-game # import leesah
 
 ### Hent Kafkasertifikat
 
-Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-game-cert.ekstern.dev.nav.no/certs](https://leesah-game-cert.ekstern.dev.nav.no/certs), brukernavn og passord skal du få utdelt.
+Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-certs.ekstern.dev.nav.no](https://leesah-certs.ekstern.dev.nav.no), brukernavn og passord skal du få utdelt.
 
 Du kan også bruke kommandoen nedenfor:
 
 ```bash
-wget --user <username> --password <password> -O leesah-creds.zip https://leesah-game-cert.ekstern.dev.nav.no/certs && unzip leesah-creds.zip 
+wget --user <username> --password <password> -O leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip 
 ```
 
 ### Eksempelkode
 
-Nedenfor er et fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode):
+Nedenfor finner du et nesten fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode):
 
 ```python
 """The Leesah quiz game client.

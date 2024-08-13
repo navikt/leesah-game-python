@@ -24,8 +24,8 @@ class QuizRapid:
                  team_name: str,
                  topic: str = os.getenv("QUIZ_TOPIC"),
                  consumer_group_id: str = uuid.uuid4(),
-                 path_to_cert: str = os.environ.get(
-                     'QUIZ_CERT', 'student-certs.yaml'),
+                 path_to_certs: str = os.environ.get(
+                     'QUIZ_CERTS', 'leesah-certs.yaml'),
                  auto_commit: bool = False,):
         """
         Construct all the necessary attributes for the QuizRapid object.
@@ -35,18 +35,18 @@ class QuizRapid:
             team_name : str
                 team name to filter messages on
             topic : str
-                topic to produce and consume messages
+                topic to produce and consume messages on (default is first topic in cert file)
             consumer_group_id : str
-                the kafka consumer group id to commit offset on
-            cert_file : str
-                path to the certificate file
+                the kafka consumer group id to commit offset on (default is random uuid)
+            path_to_certs : str
+                path to the certificate file (default is leesah-certs.yaml)
             auto_commit : bool, optional
                 auto commit offset for the consumer (default is False)
         """
         cert_path = Path(path_to_cert)
         if not cert_path.exists():
-            if Path("certs/student-certs.yaml").exists():
-                cert_path = Path("certs/student-certs.yaml")
+            if Path("certs/leesah-certs.yaml").exists():
+                cert_path = Path("certs/lessah-certs.yaml")
             else:
                 raise FileNotFoundError(f"Could not find cert file in: {path_to_cert} or {cert_path}")
 
