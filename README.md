@@ -65,23 +65,29 @@ import leesah
 TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME"
 
-
 class Rapid(leesah.QuizRapid):
+    """The Rapid class that answers questions."""
 
     def run(self):
+        """Run the quiz game.
+
+        We recommend you to use functions to answer questions.
+        """
         while True:
             question = self.get_question()
             print(f"Received question: {question}")
-            if question.kategorinavn == "team-registration":
-                raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
-				# self.handle_register_team()
+            if question.kategorinavn == leesah.TEAM_REGISTRATION:
+                self.handle_register_team()
 
     def handle_register_team(self):
-        self.answer(HEX_CODE)
+        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
+        # self.answer(HEX_CODE)
 
 
 if __name__ == "__main__":
-    rapid = Rapid(TEAM_NAME)
+    rapid = Rapid(TEAM_NAME, ignored_categories=[
+        # leesah.TEAM_REGISTRATION,
+    ])
     rapid.run()
 ```
 

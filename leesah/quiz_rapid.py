@@ -23,6 +23,7 @@ class QuizRapid:
     def __init__(self,
                  team_name: str,
                  topic: str = os.getenv("QUIZ_TOPIC"),
+                 ignored_categories: list = [],
                  consumer_group_id: str = uuid.uuid4(),
                  path_to_certs: str = os.environ.get(
                      'QUIZ_CERTS', 'leesah-certs.yaml'),
@@ -36,6 +37,8 @@ class QuizRapid:
                 team name to filter messages on
             topic : str
                 topic to produce and consume messages on (default is first topic in cert file)
+            ignored_categories : list
+                list of categories to ignore for handling (default is empty list)
             consumer_group_id : str
                 the kafka consumer group id to commit offset on (default is random uuid)
             path_to_certs : str
@@ -68,6 +71,7 @@ class QuizRapid:
         self._team_name = team_name
         self._producer: Producer = producer
         self._consumer: Consumer = consumer
+        self._ignored_categories = ignored_categories
 
         print("🚀 Starting QuizRapid...")
         print("🔍 looking for first question")
@@ -83,7 +87,7 @@ class QuizRapid:
                 self._handle_error(msg)
             else:
                 question = self._handle_message(msg)
-                if question:
+                if question and question.kategorinavn not in self._ignored_categories:
                     return question
 
     def _handle_error(self, msg):
