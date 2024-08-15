@@ -126,7 +126,7 @@ class QuizRapid:
                                 svar=answer_string).model_dump()
                 answer["@opprettet"] = datetime.now().isoformat()
                 answer["@event_name"] = "SVAR"
-                print(f"📤 publishing answer: {answer}")
+                print(f"📤 Published answer: {answer}")
                 value = json.dumps(answer).encode("utf-8")
                 self._producer.produce(topic=self._topic,
                                            value=value)
