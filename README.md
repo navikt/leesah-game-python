@@ -35,7 +35,7 @@ python3 -m venv venv
 Det er kun en avhengighet du trenger, og det er biblioteket [leesah-game](https://pypi.org/project/leesah-game/).
 
 ```shell
-python3 -m pip install leesah-game # import leesah
+python3 -m pip install leesah-game
 ```
 
 ### Hent Kafkasertifikat
