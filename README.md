@@ -58,7 +58,6 @@ Nedenfor finner du et nesten fungerende eksempel som svarer på spørsmålet om 
 # 1. Ensure credential files are in the certs directory
 # 2. Set `TEAM_NAME` to your preferred team name
 # 3. Set `HEX_CODE` to your preferred team color
-# 4. Remove the `NotImplementedError` and return your hex code
 """
 import leesah
 
@@ -80,8 +79,7 @@ class Rapid(leesah.QuizRapid):
                 self.handle_register_team()
 
     def handle_register_team(self):
-        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
-        # self.answer(HEX_CODE)
+        self.answer(HEX_CODE)
 
 
 if __name__ == "__main__":
