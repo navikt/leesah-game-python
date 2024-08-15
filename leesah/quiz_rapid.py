@@ -49,9 +49,9 @@ class QuizRapid:
         certs_path = Path(path_to_certs)
         if not certs_path.exists():
             if Path("certs/leesah-certs.yaml").exists():
-                cert_path = Path("certs/lessah-certs.yaml")
+                cert_path = Path("certs/leesah-certs.yaml")
             else:
-                raise FileNotFoundError(f"Could not find cert file in: {paths_to_cert} or {certs_path}")
+                raise FileNotFoundError(f"Could not find certs file in: {path_to_certs} or {certs_path}")
 
         certs = yaml.load(certs_path.open(mode="r").read(),
                           Loader=SafeLoader)
