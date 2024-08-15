@@ -8,6 +8,22 @@ from pydantic import BaseModel
 TYPE_QUESTION = "SPØRSMÅL"
 TYPE_ANSWER = "SVAR"
 
+"""Categories"""
+ARITHMETIC = "aritmetikk"
+BANK_ACCOUNT = "bankkonto"
+BASE64 = "base64"
+DEDUPLICATION = "deduplication"
+GRUNNBELØP = "grunnbeløp"
+MIN_MAX = "min-max"
+NAV = "NAV"
+PING_PONG = "ping-pong"
+PRIME = "primtall"
+TEAM_REGISTRATION = "team-registration"
+
+"""NAIS categories"""
+INGRESS = "ingress"
+LOGG = "logg"
+SERVICE_DISCOVERY = "service-discovery"
 
 class Answer(BaseModel):
     """An answer to a question."""
@@ -24,3 +40,4 @@ class Question(BaseModel):
 
     kategorinavn: str
     spørsmål: str
+    svarformat: str

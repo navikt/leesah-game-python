@@ -40,17 +40,17 @@ python3 -m pip install leesah-game # import leesah
 
 ### Hent Kafkasertifikat
 
-Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-game-cert.ekstern.dev.nav.no/certs](https://leesah-game-cert.ekstern.dev.nav.no/certs), brukernavn og passord skal du få utdelt.
+Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-certs.ekstern.dev.nav.no](https://leesah-certs.ekstern.dev.nav.no), brukernavn og passord skal du få utdelt.
 
 Du kan også bruke kommandoen nedenfor:
 
 ```bash
-wget --user <username> --password <password> -O leesah-creds.zip https://leesah-game-cert.ekstern.dev.nav.no/certs && unzip leesah-creds.zip 
+wget --user <username> --password <password> -O leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip 
 ```
 
 ### Eksempelkode
 
-Nedenfor er et fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode):
+Nedenfor finner du et nesten fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode):
 
 ```python
 """The Leesah quiz game client.
@@ -58,27 +58,35 @@ Nedenfor er et fungerende eksempel som svarer på spørsmålet om lagregistrerin
 # 1. Ensure credential files are in the certs directory
 # 2. Set `TEAM_NAME` to your preferred team name
 # 3. Set `HEX_CODE` to your preferred team color
-# 4. Remove the `NotImplementedError` and return your hex code
 """
 import leesah
 
 TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME"
 
+class Rapid(leesah.QuizRapid):
+    """The Rapid class that answers questions."""
 
-def handle_questions(question: leesah.Question):
-    """Call when a question is received from the stream.
+    def run(self):
+        """Run the quiz game.
 
-    The return value is your answer to the question.
-    """
-    print(f"Received question: {question}")
-    if question.kategorinavn == "team-registration":
-        raise NotImplementedError("DU MÅ HÅNDTERE team-registration HER")
-        # return HEX_CODE
+        We recommend you to use functions to answer questions.
+        """
+        while True:
+            question = self.get_question()
+            print(f"Received question: {question}")
+            if question.kategorinavn == leesah.TEAM_REGISTRATION:
+                self.handle_register_team()
+
+    def handle_register_team(self):
+        self.answer(HEX_CODE)
 
 
-rapid = leesah.QuizRapid(TEAM_NAME)
-rapid.run(handle_questions)
+if __name__ == "__main__":
+    rapid = Rapid(TEAM_NAME, ignored_categories=[
+        # leesah.TEAM_REGISTRATION,
+    ])
+    rapid.run()
 ```
 
 ### Kjør koden

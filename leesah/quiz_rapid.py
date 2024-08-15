@@ -23,9 +23,10 @@ class QuizRapid:
     def __init__(self,
                  team_name: str,
                  topic: str = os.getenv("QUIZ_TOPIC"),
+                 ignored_categories: list = [],
                  consumer_group_id: str = uuid.uuid4(),
-                 path_to_cert: str = os.environ.get(
-                     'QUIZ_CERT', 'certs/student-certs.yaml'),
+                 path_to_certs: str = os.environ.get(
+                     'QUIZ_CERTS', 'leesah-certs.yaml'),
                  auto_commit: bool = False,):
         """
         Construct all the necessary attributes for the QuizRapid object.
@@ -35,18 +36,20 @@ class QuizRapid:
             team_name : str
                 team name to filter messages on
             topic : str
-                topic to produce and consume messages
+                topic to produce and consume messages on (default is first topic in cert file)
+            ignored_categories : list
+                list of categories to ignore for handling (default is empty list)
             consumer_group_id : str
-                the kafka consumer group id to commit offset on
-            cert_file : str
-                path to the certificate file
+                the kafka consumer group id to commit offset on (default is random uuid)
+            path_to_certs : str
+                path to the certificate file (default is leesah-certs.yaml)
             auto_commit : bool, optional
                 auto commit offset for the consumer (default is False)
         """
         cert_path = Path(path_to_cert)
         if not cert_path.exists():
-            if Path("student-certs.yaml").exists():
-                cert_path = Path("student-certs.yaml")
+            if Path("certs/leesah-certs.yaml").exists():
+                cert_path = Path("certs/lessah-certs.yaml")
             else:
                 raise FileNotFoundError(f"Could not find cert file in: {path_to_cert} or {cert_path}")
 
@@ -68,23 +71,24 @@ class QuizRapid:
         self._team_name = team_name
         self._producer: Producer = producer
         self._consumer: Consumer = consumer
+        self._ignored_categories = ignored_categories
 
-    def run(self, question_handler):
-        """Run the QuizRapid."""
         print("🚀 Starting QuizRapid...")
-        try:
-            while self.running:
-                msg = self._consumer.poll(timeout=1)
-                if msg is None:
-                    continue
+        print("🔍 looking for first question")
 
-                if msg.error():
-                    self._handle_error(msg)
-                else:
-                    self._handle_message(msg, question_handler)
+    def get_question(self):
+        """Get a question from the quiz rapid."""
+        while self.running:
+            msg = self._consumer.poll(timeout=1)
+            if msg is None:
+                continue
 
-        finally:
-            self.close()
+            if msg.error():
+                self._handle_error(msg)
+            else:
+                question = self._handle_message(msg)
+                if question and question.kategorinavn not in self._ignored_categories:
+                    return question
 
     def _handle_error(self, msg):
         """Handle errors from the consumer."""
@@ -94,7 +98,7 @@ class QuizRapid:
         elif msg.error():
             raise KafkaException(msg.error())
 
-    def _handle_message(self, msg, question_handler):
+    def _handle_message(self, msg):
         """Handle messages from the consumer."""
         try:
             msg = json.loads(msg.value().decode("utf-8"))
@@ -104,21 +108,29 @@ class QuizRapid:
 
         try:
             if msg["@event_name"] == TYPE_QUESTION:
-                question = Question(kategorinavn=msg['kategorinavn'],
-                                    spørsmål=msg['spørsmål'])
-                answer_string = question_handler(question)
+                self._last_message = msg
+                return Question(kategorinavn=msg['kategorinavn'],
+                                spørsmål=msg['spørsmål'],
+                                svarformat=msg['svarformat'])
+        except KeyError as e:
+            print(f"error: unknown message: {msg}, missing key: {e}")
+            return
 
-                if answer_string:
-                    answer = Answer(spørsmålId=msg['spørsmålId'],
-                                    kategorinavn=msg['kategorinavn'],
-                                    lagnavn=self._team_name,
-                                    svar=answer_string).model_dump()
-                    answer["@opprettet"] = datetime.now().isoformat()
-                    answer["@event_name"] = "SVAR"
-                    print(f"publishing answer: {answer}")
-                    value = json.dumps(answer).encode("utf-8")
-                    self._producer.produce(topic=self._topic,
+    def answer(self, answer_string: str):
+        try:
+            if answer_string:
+                msg = self._last_message
+                answer = Answer(spørsmålId=msg['spørsmålId'],
+                                kategorinavn=msg['kategorinavn'],
+                                lagnavn=self._team_name,
+                                svar=answer_string).model_dump()
+                answer["@opprettet"] = datetime.now().isoformat()
+                answer["@event_name"] = "SVAR"
+                print(f"📤 publishing answer: {answer}")
+                value = json.dumps(answer).encode("utf-8")
+                self._producer.produce(topic=self._topic,
                                            value=value)
+                self._last_message = None
         except KeyError as e:
             print(f"error: unknown message: {msg}, missing key: {e}")
 
