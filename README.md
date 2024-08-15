@@ -42,13 +42,15 @@ python3 -m pip install leesah-game
 
 ### Hent Kafkasertifikat
 
-Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-certs.ekstern.dev.nav.no](https://leesah-certs.ekstern.dev.nav.no), brukernavn og passord skal du få utdelt.
+Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-certs.ekstern.dev.nav.no](https://leesah-certs.ekstern.dev.nav.no), passord får du utdelt.
 
 Du kan også bruke kommandoen nedenfor:
 
 ```bash
 wget --user leesah-game --password <password> -O leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip 
 ```
+
+Du vil nå ende opp med filen `leesah-certs.yaml` i `leesah-game`-katalogen du lagde tidligere.
 
 ### Eksempelkode
 
