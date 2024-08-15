@@ -16,6 +16,8 @@ Dette biblioteket kan brukes i begge versjoner, men denne dokumentasjonen dekker
 
 Vi anbefaler at du bruker et virtuelt miljø for å kjøre koden din, som for eksempel [Venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/).
 
+Start med å opprette en katalog `leesah-game`.
+
 **For macOS/Linux**
 ```shell
 cd leesah-game
@@ -45,12 +47,13 @@ Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-certs.ek
 Du kan også bruke kommandoen nedenfor:
 
 ```bash
-wget --user <username> --password <password> -O leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip 
+wget --user leesah-game --password <password> -O leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip 
 ```
 
 ### Eksempelkode
 
-Nedenfor finner du et nesten fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode):
+For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode).
+Opprett filen `main.py` og lim inn koden nedenfor.
 
 ```python
 """The Leesah quiz game client.
