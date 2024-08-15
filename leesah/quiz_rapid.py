@@ -36,7 +36,7 @@ class QuizRapid:
             team_name : str
                 team name to filter messages on
             topic : str
-                topic to produce and consume messages on (default is first topic in cert file)
+                topic to produce and consume messages on (default is first topic in certs file)
             ignored_categories : list
                 list of categories to ignore for handling (default is empty list)
             consumer_group_id : str
@@ -46,26 +46,26 @@ class QuizRapid:
             auto_commit : bool, optional
                 auto commit offset for the consumer (default is False)
         """
-        cert_path = Path(path_to_cert)
-        if not cert_path.exists():
+        certs_path = Path(path_to_certs)
+        if not certs_path.exists():
             if Path("certs/leesah-certs.yaml").exists():
                 cert_path = Path("certs/lessah-certs.yaml")
             else:
-                raise FileNotFoundError(f"Could not find cert file in: {path_to_cert} or {cert_path}")
+                raise FileNotFoundError(f"Could not find cert file in: {paths_to_cert} or {certs_path}")
 
-        creds = yaml.load(cert_path.open(mode="r").read(),
+        certs = yaml.load(certs_path.open(mode="r").read(),
                           Loader=SafeLoader)
         if not topic:
-            self._topic = creds["topics"][0]
+            self._topic = certs["topics"][0]
         else:
             self._topic = topic
 
-        consumer = Consumer(consumer_config(creds,
+        consumer = Consumer(consumer_config(certs,
                                             consumer_group_id,
                                             auto_commit))
         consumer.subscribe([self._topic])
 
-        producer = Producer(producer_config(creds))
+        producer = Producer(producer_config(crets))
 
         self.running = True
         self._team_name = team_name
