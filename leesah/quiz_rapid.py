@@ -65,7 +65,7 @@ class QuizRapid:
                                             auto_commit))
         consumer.subscribe([self._topic])
 
-        producer = Producer(producer_config(crets))
+        producer = Producer(producer_config(certs))
 
         self.running = True
         self._team_name = team_name
