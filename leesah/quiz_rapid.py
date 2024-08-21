@@ -86,8 +86,10 @@ class QuizRapid:
             if msg.error():
                 self._handle_error(msg)
             else:
+                if question.kategorinavn not in self._ignored_categories:
+                    print(f"📥 Received question: {question}")
                 question = self._handle_message(msg)
-                if question and question.kategorinavn not in self._ignored_categories:
+                if question
                     return question
 
     def _handle_error(self, msg):
