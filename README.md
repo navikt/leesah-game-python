@@ -79,7 +79,6 @@ class Rapid(leesah.QuizRapid):
         """
         while True:
             question = self.get_question()
-            print(f"Received question: {question}")
             if question.kategorinavn == leesah.TEAM_REGISTRATION:
                 self.handle_register_team()
 
