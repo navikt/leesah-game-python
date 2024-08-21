@@ -25,6 +25,7 @@ INGRESS = "ingress"
 LOGG = "logg"
 SERVICE_DISCOVERY = "service-discovery"
 
+
 class Answer(BaseModel):
     """An answer to a question."""
 

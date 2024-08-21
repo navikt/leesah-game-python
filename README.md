@@ -69,6 +69,7 @@ import leesah
 TEAM_NAME = "CHANGE ME"
 HEX_CODE = "CHANGE ME"
 
+
 class Rapid(leesah.QuizRapid):
     """The Rapid class that answers questions."""
 

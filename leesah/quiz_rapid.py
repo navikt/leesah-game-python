@@ -51,7 +51,8 @@ class QuizRapid:
             if Path("certs/leesah-certs.yaml").exists():
                 cert_path = Path("certs/leesah-certs.yaml")
             else:
-                raise FileNotFoundError(f"Could not find certs file in: {path_to_certs} or {certs_path}")
+                raise FileNotFoundError(
+                    f"Could not find certs file in: {path_to_certs} or {certs_path}")
 
         certs = yaml.load(certs_path.open(mode="r").read(),
                           Loader=SafeLoader)
@@ -128,10 +129,11 @@ class QuizRapid:
                                 svar=answer_string).model_dump()
                 answer["@opprettet"] = datetime.now().isoformat()
                 answer["@event_name"] = "SVAR"
-                print(f"📤 Published answer: kategorinavn='{msg['kategorinavn']}' svar='{answer_string}' lagnavn='{self._team_name}'")
+                print(
+                    f"📤 Published answer: kategorinavn='{msg['kategorinavn']}' svar='{answer_string}' lagnavn='{self._team_name}'")
                 value = json.dumps(answer).encode("utf-8")
                 self._producer.produce(topic=self._topic,
-                                           value=value)
+                                       value=value)
                 self._last_message = None
         except KeyError as e:
             print(f"error: unknown message: {msg}, missing key: {e}")
