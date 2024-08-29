@@ -80,7 +80,7 @@ class Rapid(leesah.QuizRapid):
         """
         while True:
             question = self.get_question()
-            if question.kategorinavn == leesah.TEAM_REGISTRATION:
+            if question.kategorinavn == "team-registration":
                 self.handle_register_team()
 
     def handle_register_team(self):
@@ -89,7 +89,7 @@ class Rapid(leesah.QuizRapid):
 
 if __name__ == "__main__":
     rapid = Rapid(TEAM_NAME, ignored_categories=[
-        # leesah.TEAM_REGISTRATION,
+        # "team-registration",
     ])
     rapid.run()
 ```
