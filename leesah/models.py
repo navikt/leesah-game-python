@@ -22,6 +22,7 @@ class Answer(BaseModel):
 class Question(BaseModel):
     """A question."""
 
+    id: str
     kategorinavn: str
     spørsmål: str
     svarformat: str

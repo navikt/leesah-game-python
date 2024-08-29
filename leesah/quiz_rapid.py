@@ -112,7 +112,8 @@ class QuizRapid:
         try:
             if msg["@event_name"] == TYPE_QUESTION:
                 self._last_message = msg
-                return Question(kategorinavn=msg['kategorinavn'],
+                return Question(id=msg['spørsmålId'],
+                                kategorinavn=msg['kategorinavn'],
                                 spørsmål=msg['spørsmål'],
                                 svarformat=msg['svarformat'])
         except KeyError as e:
