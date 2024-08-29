@@ -112,10 +112,10 @@ class QuizRapid:
         try:
             if msg["@event_name"] == TYPE_QUESTION:
                 self._last_message = msg
-                return Question(id=msg['spørsmålId'],
-                                kategorinavn=msg['kategorinavn'],
+                return Question(kategorinavn=msg['kategorinavn'],
                                 spørsmål=msg['spørsmål'],
-                                svarformat=msg['svarformat'])
+                                svarformat=msg['svarformat'],
+                                id=msg['spørsmålId'])
         except KeyError as e:
             print(f"error: unknown message: {msg}, missing key: {e}")
             return
