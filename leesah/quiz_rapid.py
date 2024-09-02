@@ -1,5 +1,3 @@
-"""Klassen til Quizstryket."""
-
 import json
 import uuid
 import os
@@ -15,7 +13,7 @@ from .kafka_config import consumer_config, producer_config
 from .modeller import Svar, Spørsmål, TYPE_SVAR, TYPE_SPØRSMÅL
 
 
-class Kviss:
+class QuizRapid:
     """Kvissformidler av spørsmål og svar.
 
     Til og fra stryket på vegne av deltakerne.

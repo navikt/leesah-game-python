@@ -58,7 +58,7 @@ For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svar
 Opprett filen `main.py` og lim inn koden nedenfor.
 
 ```python
-"""Leesah-game sin kvissklient.
+"""Spill Leesah-game
 
 1. Hent ned sertifikater, og sikre deg at de ligger i filen leesah-certs.yaml
 2. Sett 'LAGNAVN' til ditt valgte lagnavn
@@ -70,10 +70,10 @@ LAGNAVN = "BYTT MEG"
 HEXKODE = "BYTT MEG"
 
 
-class Kviss(leesah.Kviss):
+class Rapid(leesah.QuizRapid):
     """Klassen som svarer på spørsmålene."""
 
-    def kjør(selv):
+    def kjør(self):
         """Kjør quizspillet.
 
         Vi anbefaler at du bruker funksjoner til å svare på spørsmålene.
@@ -88,12 +88,12 @@ class Kviss(leesah.Kviss):
 
 
 if __name__ == "__main__":
-	kviss = Kviss(LAGNAVN, ignorerte_kategorier=[
+	rapid = Rapid(LAGNAVN, ignorerte_kategorier=[
         # "team-registration",
     ])
 
     try:
-        kviss.kjør()
+        rapid.kjør()
     except (KeyboardInterrupt, SystemExit):
         kviss.avslutt()
 ```
