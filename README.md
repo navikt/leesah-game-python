@@ -54,7 +54,7 @@ Du vil nå ende opp med filen `leesah-certs.yaml` i `leesah-game`-katalogen du l
 
 ### Eksempelkode
 
-For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hex-kode).
+For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svarer på spørsmålet om lagregistrering med et navn og en farge (hexkode).
 Opprett filen `main.py` og lim inn koden nedenfor.
 
 ```python
@@ -74,7 +74,7 @@ class Rapid(leesah.QuizRapid):
     """Klassen som svarer på spørsmålene."""
 
     def kjør(self):
-        """Kjør quizspillet.
+        """Start quizen!
 
         Vi anbefaler at du bruker funksjoner til å svare på spørsmålene.
         """
@@ -84,11 +84,11 @@ class Rapid(leesah.QuizRapid):
                 self.behandle_lagregistrering(melding.spørsmål)
 
     def behandle_lagregistrering(self, spørsmål):
-        self.publiser_svar(HEKS)
+        self.publiser_svar(HEXKODE)
 
 
 if __name__ == "__main__":
-	rapid = Rapid(LAGNAVN, ignorerte_kategorier=[
+    rapid = Rapid(LAGNAVN, ignorerte_kategorier=[
         # "team-registration",
     ])
 
