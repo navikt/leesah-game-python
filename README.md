@@ -58,40 +58,40 @@ For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svar
 Opprett filen `main.py` og lim inn koden nedenfor.
 
 ```python
-"""The Leesah quiz game client.
+"""Leesah-game sin quiz klient.
 
-# 1. Ensure credential files are in the certs directory
-# 2. Set `TEAM_NAME` to your preferred team name
-# 3. Set `HEX_CODE` to your preferred team color
+1. Hent ned legitimasjon, og at de ligger i filen leesah-certs.yaml
+2. Sett 'LAGNAVN' til ditt valgte lagnavn
+3. Sett 'HEKSKODE' til din valgte farge
 """
 import leesah
 
-TEAM_NAME = "CHANGE ME"
-HEX_CODE = "CHANGE ME"
+LAGNAVN = "BYTT MEG"
+HEKSKODE = "BYTT MEG"
 
 
-class Rapid(leesah.QuizRapid):
-    """The Rapid class that answers questions."""
+class Stryket(leesah.QuizStryket):
+    """Klassen som svarer på spørsmålene."""
 
-    def run(self):
-        """Run the quiz game.
+    def kjør(selv):
+        """Kjør quizspillet.
 
-        We recommend you to use functions to answer questions.
+        Vi anbefaler at du bruker funksjoner til å svare på spørsmålene.
         """
         while True:
-            question = self.get_question()
-            if question.kategorinavn == "team-registration":
-                self.handle_register_team()
+            melding = selv.hent_spørsmål()
+            if melding.kategorinavn == "team-registration":
+                self.behandle_lagregistrering(melding.spørsmål)
 
-    def handle_register_team(self):
-        self.answer(HEX_CODE)
+    def behandle_lagregistrering(selv, spørsmål):
+        selv.publiser_svar(HEKS)
 
 
 if __name__ == "__main__":
-    rapid = Rapid(TEAM_NAME, ignored_categories=[
+    stryket = Stryket(LAGNAVN, ignorerte_kategorier=[
         # "team-registration",
     ])
-    rapid.run()
+    stryket.kjør()
 ```
 
 ### Kjør koden
