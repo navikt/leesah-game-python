@@ -1,16 +1,16 @@
-"""Models for the game."""
+"""Modeller for spillet."""
 
 import uuid
 
 from datetime import datetime
 from pydantic import BaseModel
 
-TYPE_QUESTION = "SPØRSMÅL"
-TYPE_ANSWER = "SVAR"
+TYPE_SPØRSMÅL = "SPØRSMÅL"
+TYPE_SVAR = "SVAR"
 
 
-class Answer(BaseModel):
-    """An answer to a question."""
+class Svar(BaseModel):
+    """Et svar til et spørsmål."""
 
     spørsmålId: str
     kategorinavn: str
@@ -19,8 +19,8 @@ class Answer(BaseModel):
     svarId: str = str(uuid.uuid4())
 
 
-class Question(BaseModel):
-    """A question."""
+class Spørsmål(BaseModel):
+    """Et spørsmål som venter på et svar."""
 
     id: str
     kategorinavn: str

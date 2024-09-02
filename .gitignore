@@ -163,3 +163,4 @@ cython_debug/
 main.py
 certs/
 student-certs.yaml
+leesah-certs.yaml

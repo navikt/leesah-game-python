@@ -58,19 +58,19 @@ For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svar
 Opprett filen `main.py` og lim inn koden nedenfor.
 
 ```python
-"""Leesah-game sin quiz klient.
+"""Leesah-game sin kvissklient.
 
-1. Hent ned legitimasjon, og at de ligger i filen leesah-certs.yaml
+1. Hent ned sertifikater, og sikre deg at de ligger i filen leesah-certs.yaml
 2. Sett 'LAGNAVN' til ditt valgte lagnavn
-3. Sett 'HEKSKODE' til din valgte farge
+3. Sett 'HEXKODE' til din valgte farge
 """
 import leesah
 
 LAGNAVN = "BYTT MEG"
-HEKSKODE = "BYTT MEG"
+HEXKODE = "BYTT MEG"
 
 
-class Stryket(leesah.QuizStryket):
+class Kviss(leesah.Kviss):
     """Klassen som svarer på spørsmålene."""
 
     def kjør(selv):
@@ -79,19 +79,23 @@ class Stryket(leesah.QuizStryket):
         Vi anbefaler at du bruker funksjoner til å svare på spørsmålene.
         """
         while True:
-            melding = selv.hent_spørsmål()
+            melding = self.hent_spørsmål()
             if melding.kategorinavn == "team-registration":
                 self.behandle_lagregistrering(melding.spørsmål)
 
-    def behandle_lagregistrering(selv, spørsmål):
-        selv.publiser_svar(HEKS)
+    def behandle_lagregistrering(self, spørsmål):
+        self.publiser_svar(HEKS)
 
 
 if __name__ == "__main__":
-    stryket = Stryket(LAGNAVN, ignorerte_kategorier=[
+	kviss = Kviss(LAGNAVN, ignorerte_kategorier=[
         # "team-registration",
     ])
-    stryket.kjør()
+
+    try:
+        kviss.kjør()
+    except (KeyboardInterrupt, SystemExit):
+        kviss.avslutt()
 ```
 
 ### Kjør koden
