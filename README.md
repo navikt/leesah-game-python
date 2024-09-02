@@ -95,7 +95,7 @@ if __name__ == "__main__":
     try:
         rapid.kjør()
     except (KeyboardInterrupt, SystemExit):
-        kviss.avslutt()
+        rapid.avslutt()
 ```
 
 ### Kjør koden
