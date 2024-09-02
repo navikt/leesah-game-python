@@ -74,7 +74,7 @@ class QuizRapid:
         self._consumer: Consumer = consumer
         self._ignored_categories = ignorerte_kategorier
 
-        print("🔍 ser etter første spørsmål")
+        print("🔍 Ser etter første spørsmål")
 
     def hent_spørsmål(self):
         """Henter neste spørsmål fra stryket."""
