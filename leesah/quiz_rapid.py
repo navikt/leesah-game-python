@@ -114,7 +114,8 @@ class QuizRapid:
                 return Spørsmål(kategorinavn=msg['kategorinavn'],
                                 spørsmål=msg['spørsmål'],
                                 svarformat=msg['svarformat'],
-                                id=msg['spørsmålId'])
+                                id=msg['spørsmålId'],
+                                dokumentasjon=msg['dokumentasjon'])
         except KeyError as e:
             print(f"feil: ukjent melding: {msg}, mangler nøkkel: {e}")
             return

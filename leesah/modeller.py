@@ -26,3 +26,4 @@ class Spørsmål(BaseModel):
     kategorinavn: str
     spørsmål: str
     svarformat: str
+    dokumentasjon: str
