@@ -80,7 +80,7 @@ class Rapid(leesah.QuizRapid):
         """
         while True:
             melding = self.hent_spørsmål()
-            if melding.kategorinavn == "team-registration":
+            if melding.kategori == "team-registration":
                 self.behandle_lagregistrering(melding.spørsmål)
 
     def behandle_lagregistrering(self, spørsmål):

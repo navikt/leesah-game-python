@@ -88,7 +88,7 @@ class QuizRapid:
             else:
                 question = self._handle_message(msg)
                 if question:
-                    if question.kategorinavn not in self._ignored_categories:
+                    if question.kategori not in self._ignored_categories:
                         print(f"📥 Mottok spørsmål: {question}")
                     return question
 
@@ -111,7 +111,7 @@ class QuizRapid:
         try:
             if msg["@event_name"] == TYPE_SPØRSMÅL:
                 self._last_message = msg
-                return Spørsmål(kategorinavn=msg['kategorinavn'],
+                return Spørsmål(kategori=msg['kategori'],
                                 spørsmål=msg['spørsmål'],
                                 svarformat=msg['svarformat'],
                                 id=msg['spørsmålId'],
@@ -126,14 +126,14 @@ class QuizRapid:
             if svar:
                 msg = self._last_message
                 answer = Svar(spørsmålId=msg['spørsmålId'],
-                                kategorinavn=msg['kategorinavn'],
+                                kategori=msg['kategori'],
                                 lagnavn=self._lagnavn,
                                 svar=svar).model_dump()
                 answer["@opprettet"] = datetime.now().isoformat()
                 answer["@event_name"] = TYPE_SVAR
 
-                if msg['kategorinavn'] not in self._ignored_categories:
-                    print(f"📤 Publisert svar: kategorinavn='{msg['kategorinavn']}' svar='{svar}' lagnavn='{self._lagnavn}'")
+                if msg['kategori'] not in self._ignored_categories:
+                    print(f"📤 Publisert svar: kategori='{msg['kategori']}' svar='{svar}' lagnavn='{self._lagnavn}'")
 
                 value = json.dumps(answer).encode("utf-8")
                 self._producer.produce(topic=self._topic,

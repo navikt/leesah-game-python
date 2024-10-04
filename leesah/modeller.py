@@ -13,7 +13,7 @@ class Svar(BaseModel):
     """Et svar til et spørsmål."""
 
     spørsmålId: str
-    kategorinavn: str
+    kategori: str
     lagnavn: str = ""
     svar: str = ""
     svarId: str = str(uuid.uuid4())
@@ -23,7 +23,7 @@ class Spørsmål(BaseModel):
     """Et spørsmål som venter på et svar."""
 
     id: str
-    kategorinavn: str
+    kategori: str
     spørsmål: str
     svarformat: str
     dokumentasjon: str
