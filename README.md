@@ -47,7 +47,7 @@ Sertifikater for å koble seg på Kafka ligger tilgjengelig på [leesah-certs.ek
 Du kan også bruke kommandoen nedenfor:
 
 ```bash
-wget --user leesah-game --password <password> -O leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip 
+curl -u leesah-game:<se presentasjon> -o leesah-certs.zip https://leesah-certs.ekstern.dev.nav.no && unzip leesah-certs.zip
 ```
 
 Du vil nå ende opp med filen `leesah-certs.yaml` i `leesah-game`-katalogen du lagde tidligere.
