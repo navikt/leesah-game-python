@@ -2,6 +2,7 @@ import json
 import uuid
 import os
 import yaml
+import traceback
 
 from datetime import datetime
 from pathlib import Path
@@ -141,6 +142,14 @@ class QuizRapid:
                 self._last_message = None
         except KeyError as e:
             print(f"feil: ukjent svar: {msg}, mangler nøkkel: {e}")
+        except TypeError:
+            stack = traceback.format_stack()
+            print("DobbeltSvarException (prøver du å svare to ganger på rad?):")
+            for line in stack:
+                if "quiz_rapid.py" in line:
+                    break
+                print(line, end='')
+            exit(1)
 
     def avslutt(self):
         """Avslutter kviss."""
