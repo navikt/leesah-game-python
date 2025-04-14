@@ -72,7 +72,7 @@ LAGNAVN = "BYTT MEG"
 HEXKODE = "BYTT MEG"
 
 
-class Rapid(leesah.QuizRapid):
+class Rapid(leesah.KvissRapid):
     """Klassen som svarer på spørsmålene."""
 
     def kjør(self):
