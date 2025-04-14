@@ -1,8 +1,6 @@
 """Modeller for spillet."""
 
 import uuid
-
-from datetime import datetime
 from pydantic import BaseModel
 
 TYPE_SPØRSMÅL = "SPØRSMÅL"
