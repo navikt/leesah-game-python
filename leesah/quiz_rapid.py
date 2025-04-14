@@ -20,14 +20,15 @@ class QuizRapid:
     Til og fra stryket på vegne av deltakerne.
     """
 
-    def __init__(self,
-                 lagnavn: str,
-                 ignorerte_kategorier: list = [],
-                 topic: str = os.getenv("QUIZ_TOPIC"),
-                 consumer_group_id: str = uuid.uuid4(),
-                 path_to_certs: str = os.environ.get(
-                     'QUIZ_CERTS', 'leesah-certs.yaml'),
-                 auto_commit: bool = False,):
+    def __init__(
+        self,
+        lagnavn: str,
+        ignorerte_kategorier: list = [],
+        topic: str = os.getenv("QUIZ_TOPIC"),
+        consumer_group_id: str = uuid.uuid4(),
+        path_to_certs: str = os.environ.get("QUIZ_CERTS", "leesah-certs.yaml"),
+        auto_commit: bool = False,
+    ):
         """
         Konstruerer alle de nødvendige attributtene for et Kvissobjekt.
 
@@ -53,18 +54,16 @@ class QuizRapid:
                 cert_path = Path("certs/leesah-certs.yaml")
             else:
                 raise FileNotFoundError(
-                    f"Kunne ikke finne sertifikater: {path_to_certs} eller {certs_path}")
+                    f"Kunne ikke finne sertifikater: {path_to_certs} eller {certs_path}"
+                )
 
-        certs = yaml.load(certs_path.open(mode="r").read(),
-                          Loader=SafeLoader)
+        certs = yaml.load(certs_path.open(mode="r").read(), Loader=SafeLoader)
         if not topic:
             self._topic = certs["topics"][0]
         else:
             self._topic = topic
 
-        consumer = Consumer(consumer_config(certs,
-                                            consumer_group_id,
-                                            auto_commit))
+        consumer = Consumer(consumer_config(certs, consumer_group_id, auto_commit))
         consumer.subscribe([self._topic])
 
         producer = Producer(producer_config(certs))
@@ -96,8 +95,11 @@ class QuizRapid:
     def _handle_error(self, msg):
         """Behandler feil fra forbrukeren."""
         if msg.error().code() == KafkaError._PARTITION_EOF:
-            print("{} {} [{}] kom til enden av offset\n".
-                  format(msg.topic(), msg.partition(), msg.offset()))
+            print(
+                "{} {} [{}] kom til enden av offset\n".format(
+                    msg.topic(), msg.partition(), msg.offset()
+                )
+            )
         elif msg.error():
             raise KafkaException(msg.error())
 
@@ -112,11 +114,13 @@ class QuizRapid:
         try:
             if msg["@event_name"] == TYPE_SPØRSMÅL:
                 self._last_message = msg
-                return Spørsmål(kategori=msg['kategori'],
-                                spørsmål=msg['spørsmål'],
-                                svarformat=msg['svarformat'],
-                                id=msg['spørsmålId'],
-                                dokumentasjon=msg['dokumentasjon'])
+                return Spørsmål(
+                    kategori=msg["kategori"],
+                    spørsmål=msg["spørsmål"],
+                    svarformat=msg["svarformat"],
+                    id=msg["spørsmålId"],
+                    dokumentasjon=msg["dokumentasjon"],
+                )
         except KeyError as e:
             print(f"feil: ukjent melding: {msg}, mangler nøkkel: {e}")
             return
@@ -126,19 +130,22 @@ class QuizRapid:
         try:
             if svar:
                 msg = self._last_message
-                answer = Svar(spørsmålId=msg['spørsmålId'],
-                                kategori=msg['kategori'],
-                                lagnavn=self._lagnavn,
-                                svar=svar).model_dump()
+                answer = Svar(
+                    spørsmålId=msg["spørsmålId"],
+                    kategori=msg["kategori"],
+                    lagnavn=self._lagnavn,
+                    svar=svar,
+                ).model_dump()
                 answer["@opprettet"] = datetime.now().isoformat()
                 answer["@event_name"] = TYPE_SVAR
 
-                if msg['kategori'] not in self._ignored_categories:
-                    print(f"📤 Publisert svar: kategori='{msg['kategori']}' svar='{svar}' lagnavn='{self._lagnavn}'")
+                if msg["kategori"] not in self._ignored_categories:
+                    print(
+                        f"📤 Publisert svar: kategori='{msg['kategori']}' svar='{svar}' lagnavn='{self._lagnavn}'"
+                    )
 
                 value = json.dumps(answer).encode("utf-8")
-                self._producer.produce(topic=self._topic,
-                                       value=value)
+                self._producer.produce(topic=self._topic, value=value)
                 self._last_message = None
         except KeyError as e:
             print(f"feil: ukjent svar: {msg}, mangler nøkkel: {e}")
@@ -148,7 +155,7 @@ class QuizRapid:
             for line in stack:
                 if "quiz_rapid.py" in line:
                     break
-                print(line, end='')
+                print(line, end="")
             exit(1)
 
     def avslutt(self):
