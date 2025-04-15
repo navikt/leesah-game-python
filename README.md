@@ -168,7 +168,7 @@ Using the command above you will end up with `leesah-certs.yaml` in the `leesah-
 ### Example code
 
 To make it easy to start we have made a working example that answer the first question, `team-registration`, with a dummy name and color.
-All you need to do is update `TEAM_NAME` and `HEXCODE`, and your ready to compete!
+All you need to do is update `TEAM_NAME` and `HEX_CODE`, and your ready to compete!
 
 Create a file called `main.py` and paste the code below.
 
@@ -177,12 +177,12 @@ Create a file called `main.py` and paste the code below.
 
 1. Download the Kafka certificate, and make sure that you have a file called leesah-certs.yaml in the same directory as this file
 2. Set your own 'TEAM_NAME'
-3. Set your own 'HEXCODE' as team color
+3. Set your own 'HEX_CODE' as team color
 """
 import leesah
 
 TEAM_NAME = "CHANGE ME"
-HEXCODE = "CHANGE ME"
+HEX_CODE = "CHANGE ME"
 
 
 class Rapid(leesah.QuizRapid):
@@ -199,7 +199,7 @@ class Rapid(leesah.QuizRapid):
                 self.handle_team_registration(message.question)
 
     def handle_team_registration(self, message):
-        self.publish_answer(HEXCODE)
+        self.publish_answer(HEX_CODE)
 
 
 if __name__ == "__main__":

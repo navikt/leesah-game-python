@@ -73,6 +73,8 @@ class KvissRapid:
         self._producer: Producer = produsent
         self._consumer: Consumer = konsument
         self._ignorerte_kategorier = ignorerte_kategorier
+        print("🔍 Ser etter første spørsmål")
+
 
     def hent_spørsmål(self):
         """Henter neste spørsmål fra stryket."""
@@ -135,7 +137,6 @@ class KvissRapid:
                     lagnavn=self._lagnavn,
                     svar=svar,
                 ).model_dump()
-                answer["@opprettet"] = datetime.now().isoformat()
                 answer["@event_name"] = TYPE_SVAR
 
                 if melding["kategori"] not in self._ignorerte_kategorier:

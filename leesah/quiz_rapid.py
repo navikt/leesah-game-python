@@ -44,7 +44,7 @@ class QuizRapid:
             auto_commit : bool, optional
                 auto commit offset for the consumer (default is False)
         """
-        print("🚀 Starter opp...")
+        print("🚀 Starting...")
         certs_path = Path(path_to_certs)
         if not certs_path.exists():
             if Path("certs/leesah-certs.yaml").exists():
@@ -70,6 +70,7 @@ class QuizRapid:
         self._producer: Producer = producer
         self._consumer: Consumer = consumer
         self._ignored_categories = ignored_categories
+        print("🔍 Looking for the first question")
 
     def fetch_question(self):
         """Retrieves the next question from the quiz."""
@@ -110,7 +111,7 @@ class QuizRapid:
             if msg["@event_name"] == TYPE_SPØRSMÅL:
                 self._last_message = msg
                 return Question(
-                    category=msg["kategori"],
+                    category=categoryInEnglish(msg["kategori"]),
                     question=msg["spørsmål"],
                     answer_format=msg["svarformat"],
                     id=msg["spørsmålId"],
@@ -120,7 +121,7 @@ class QuizRapid:
             print(f"error: unknown message: {msg}, missing key: {e}")
             return
 
-    def publiser_svar(self, svar: str):
+    def publish_answer(self, svar: str):
         """Publishes an answer to the quiz."""
         try:
             if svar:
@@ -131,12 +132,11 @@ class QuizRapid:
                     lagnavn=self._team_name,
                     svar=svar,
                 ).model_dump()
-                answer["@opprettet"] = datetime.now().isoformat()
                 answer["@event_name"] = TYPE_SVAR
 
                 if msg["kategori"] not in self._ignored_categories:
                     print(
-                        f"📤 Published answer: kategory='{categoryInEnglish(msg['kategori'])}' answer='{svar}' teamName='{self._team_name}'"
+                        f"📤 Published answer: category='{categoryInEnglish(msg['kategori'])}' answer='{svar}' teamName='{self._team_name}'"
                     )
 
                 value = json.dumps(answer).encode("utf-8")
