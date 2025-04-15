@@ -60,7 +60,7 @@ For å gjøre det enklere å komme i gang har vi et fungerende eksempel som svar
 Opprett filen `main.py` og lim inn koden nedenfor.
 
 ```python
-"""Spill Leesah-game
+"""Spill Leesah Game
 
 1. Hent ned sertifikater, og sikre deg at de ligger i filen leesah-certs.yaml
 2. Sett 'LAGNAVN' til ditt valgte lagnavn
@@ -173,7 +173,7 @@ All you need to do is update `TEAM_NAME` and `HEXCODE`, and your ready to compet
 Create a file called `main.py` and paste the code below.
 
 ```python
-"""Play Leesah game
+"""Play Leesah Game
 
 1. Download the Kafka certificate, and make sure that you have a file called leesah-certs.yaml in the same directory as this file
 2. Set your own 'TEAM_NAME'
