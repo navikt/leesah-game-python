@@ -11,33 +11,30 @@ from json import JSONDecodeError
 from confluent_kafka import Consumer, Producer, KafkaError, KafkaException
 
 from .kafka_config import consumer_config, producer_config
-from .modeller import Svar, Spørsmål, TYPE_SVAR, TYPE_SPØRSMÅL
+from .modeller import Svar, Question, categoryInEnglish, TYPE_SVAR, TYPE_SPØRSMÅL
 
 
 class QuizRapid:
-    """Kvissformidler av spørsmål og svar.
-
-    Til og fra stryket på vegne av deltakerne.
-    """
+    """The quiz rapid for questions and answers."""
 
     def __init__(
         self,
-        lagnavn: str,
-        ignorerte_kategorier: list = [],
-        topic: str = os.getenv("QUIZ_TOPIC"),
-        consumer_group_id: str = uuid.uuid4(),
+        team_name: str,
+        ignored_categories: list = [],
+        topic: str | None  = os.getenv("QUIZ_TOPIC"),
+        consumer_group_id: str = str(uuid.uuid4()),
         path_to_certs: str = os.environ.get("QUIZ_CERTS", "leesah-certs.yaml"),
         auto_commit: bool = False,
     ):
         """
-        Konstruerer alle de nødvendige attributtene for et Kvissobjekt.
+        Constructs all the necessary attributes for a Quiz object.
 
-        Parametere
+        Parameters
         ----------
-            lagnavn : str
-                lagnavn for å publisere meldinger med
-            ignorerte_kategorier : list
-                liste av kategorier som ikke skal logges (default er en tom liste)
+            team_name : str
+                team name to publish messages with
+            ignored_categories : list
+                list of categories to ignore (default is an empty list)
             topic : str
                 topic to produce and consume messages on (default is first topic in certs file)
             consumer_group_id : str
@@ -51,10 +48,10 @@ class QuizRapid:
         certs_path = Path(path_to_certs)
         if not certs_path.exists():
             if Path("certs/leesah-certs.yaml").exists():
-                cert_path = Path("certs/leesah-certs.yaml")
+                certs_path = Path("certs/leesah-certs.yaml")
             else:
                 raise FileNotFoundError(
-                    f"Kunne ikke finne sertifikater: {path_to_certs} eller {certs_path}"
+                    f"Could not find certs: {path_to_certs} or {certs_path}"
                 )
 
         certs = yaml.load(certs_path.open(mode="r").read(), Loader=SafeLoader)
@@ -69,15 +66,13 @@ class QuizRapid:
         producer = Producer(producer_config(certs))
 
         self.running = True
-        self._lagnavn = lagnavn
+        self._team_name = team_name
         self._producer: Producer = producer
         self._consumer: Consumer = consumer
-        self._ignored_categories = ignorerte_kategorier
+        self._ignored_categories = ignored_categories
 
-        print("🔍 Ser etter første spørsmål")
-
-    def hent_spørsmål(self):
-        """Henter neste spørsmål fra stryket."""
+    def fetch_question(self):
+        """Retrieves the next question from the quiz."""
         while self.running:
             msg = self._consumer.poll(timeout=1)
             if msg is None:
@@ -88,15 +83,15 @@ class QuizRapid:
             else:
                 question = self._handle_message(msg)
                 if question:
-                    if question.kategori not in self._ignored_categories:
-                        print(f"📥 Mottok spørsmål: {question}")
+                    if question.category not in self._ignored_categories:
+                        print(f"📥 Received question: {question}")
                     return question
 
     def _handle_error(self, msg):
-        """Behandler feil fra forbrukeren."""
+        """Handles errors from the consumer."""
         if msg.error().code() == KafkaError._PARTITION_EOF:
             print(
-                "{} {} [{}] kom til enden av offset\n".format(
+                "{} {} [{}] reached end at offset\n".format(
                     msg.topic(), msg.partition(), msg.offset()
                 )
             )
@@ -104,36 +99,36 @@ class QuizRapid:
             raise KafkaException(msg.error())
 
     def _handle_message(self, msg):
-        """Behandler meldinger fra konsumenten."""
+        """Handles messages from the consumer."""
         try:
             msg = json.loads(msg.value().decode("utf-8"))
         except JSONDecodeError as e:
-            print(f"feil: kunne ikke lese meldingen: {msg.value()}, feil: {e}")
+            print(f"error: could not decode message: {msg}, error: {e}")
             return
 
         try:
             if msg["@event_name"] == TYPE_SPØRSMÅL:
                 self._last_message = msg
-                return Spørsmål(
-                    kategori=msg["kategori"],
-                    spørsmål=msg["spørsmål"],
-                    svarformat=msg["svarformat"],
+                return Question(
+                    category=msg["kategori"],
+                    question=msg["spørsmål"],
+                    answer_format=msg["svarformat"],
                     id=msg["spørsmålId"],
-                    dokumentasjon=msg["dokumentasjon"],
+                    documentation=msg["dokumentasjon"],
                 )
         except KeyError as e:
-            print(f"feil: ukjent melding: {msg}, mangler nøkkel: {e}")
+            print(f"error: unknown message: {msg}, missing key: {e}")
             return
 
     def publiser_svar(self, svar: str):
-        """Publiserer et svar til stryket."""
+        """Publishes an answer to the quiz."""
         try:
             if svar:
                 msg = self._last_message
                 answer = Svar(
                     spørsmålId=msg["spørsmålId"],
                     kategori=msg["kategori"],
-                    lagnavn=self._lagnavn,
+                    lagnavn=self._team_name,
                     svar=svar,
                 ).model_dump()
                 answer["@opprettet"] = datetime.now().isoformat()
@@ -141,26 +136,26 @@ class QuizRapid:
 
                 if msg["kategori"] not in self._ignored_categories:
                     print(
-                        f"📤 Publisert svar: kategori='{msg['kategori']}' svar='{svar}' lagnavn='{self._lagnavn}'"
+                        f"📤 Published answer: kategory='{categoryInEnglish(msg['kategori'])}' answer='{svar}' teamName='{self._team_name}'"
                     )
 
                 value = json.dumps(answer).encode("utf-8")
                 self._producer.produce(topic=self._topic, value=value)
                 self._last_message = None
         except KeyError as e:
-            print(f"feil: ukjent svar: {msg}, mangler nøkkel: {e}")
+            print(f"error: unknown answer: {msg}, missing key: {e}")
         except TypeError:
             stack = traceback.format_stack()
-            print("DobbeltSvarException (prøver du å svare to ganger på rad?):")
+            print("DoubleAnswerException (are you trying to answer twice in a row?):")
             for line in stack:
                 if "quiz_rapid.py" in line:
                     break
                 print(line, end="")
             exit(1)
 
-    def avslutt(self):
-        """Avslutter kviss."""
-        print("🛑 Stenger ned...")
+    def close(self):
+        """Closing quiz."""
+        print("🛑 Shutting down...")
         self.running = False
         self._producer.flush()
         self._consumer.close()

@@ -25,3 +25,34 @@ class Spørsmål(BaseModel):
     spørsmål: str
     svarformat: str
     dokumentasjon: str
+
+class Question(BaseModel):
+    """A question waiting for an answer."""
+
+    id: str
+    category: str
+    question: str
+    answer_format: str
+    documentation: str
+
+
+def categoryInEnglish(kategori: str) -> str:
+    """Oversetter kategorien til engelsk."""
+    if kategori == "lagregistrering":
+        return "team-registration"
+    elif kategori == "ordsøk":
+        return "word-search"
+    elif kategori == "aritmetikk":
+        return "arithmetic"
+    elif kategori == "bankkonto":
+        return "bank-account"
+    elif kategori == "primtall":
+        return "prime-numbers"
+    elif kategori == "grunnbeløp":
+        return "basic-amount"
+    elif kategori == "kalkulator":
+        return "calculator"
+    elif kategori == "deduplisering":
+        return "deduplication"
+    else:
+        return kategori
