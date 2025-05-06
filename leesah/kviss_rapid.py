@@ -73,6 +73,13 @@ class KvissRapid:
         self._producer: Producer = produsent
         self._consumer: Consumer = konsument
         self._ignorerte_kategorier = ignorerte_kategorier
+
+        try:
+            self._besvart_fil = open(".besvart", "r+", encoding="utf-8")
+            self._svar = list(self._besvart_fil)
+        except Exception as e:
+            print("Feil ved åpning av fil:", e)
+
         print("🔍 Ser etter første spørsmål")
 
 
@@ -88,6 +95,8 @@ class KvissRapid:
             else:
                 spørsmål = self._håndter_melding(melding)
                 if spørsmål:
+                    if spørsmål.spørsmålId in self._svar:
+                        continue
                     if spørsmål.kategori not in self._ignorerte_kategorier:
                         print(f"📥 Mottok spørsmål: {spørsmål}")
                     return spørsmål
@@ -121,6 +130,9 @@ class KvissRapid:
                     id=melding["spørsmålId"],
                     dokumentasjon=melding["dokumentasjon"],
                 )
+            elif melding["@event_name"] == TYPE_KORREKTUR:
+                self._svar.append(melding["spørsmålId"])
+                self._besvart_fil.write(melding["spørsmålId"] + "\n")
         except KeyError as e:
             print(f"feil: ukjent melding: {melding}, mangler nøkkel: {e}")
             return
@@ -162,6 +174,7 @@ class KvissRapid:
         """Avslutter kviss."""
         print("🛑 Stenger ned...")
         self.kjører = False
+        self._besvart_fil.close()
         self._producer.flush()
         self._consumer.close()
         self._consumer.close()
