@@ -122,19 +122,25 @@ class KvissRapid:
 
         try:
             if melding["@event_name"] == TYPE_SPØRSMÅL:
-                self._siste_melding = melding
-                return Spørsmål(
-                    kategori=melding["kategori"],
-                    spørsmål=melding["spørsmål"],
-                    svarformat=melding["svarformat"],
-                    id=melding["spørsmålId"],
-                    dokumentasjon=melding["dokumentasjon"],
-                )
+                return _håndter_spørsmål(melding)
             elif melding["@event_name"] == TYPE_KORREKTUR:
                 self._svar.append(melding["spørsmålId"])
                 self._besvart_fil.write(melding["spørsmålId"] + "\n")
         except KeyError as e:
             print(f"feil: ukjent melding: {melding}, mangler nøkkel: {e}")
+
+        return None
+
+    def _håndter_spørsmål(self, melding):
+        self._siste_melding = melding
+        return Spørsmål(
+            kategori=melding["kategori"],
+            spørsmål=melding["spørsmål"],
+            svarformat=melding["svarformat"],
+            id=melding["spørsmålId"],
+            dokumentasjon=melding["dokumentasjon"],
+        )
+
             return
 
     def publiser_svar(self, svar: str):
