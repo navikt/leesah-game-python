@@ -11,7 +11,7 @@ from json import JSONDecodeError
 from confluent_kafka import Consumer, Producer, KafkaError, KafkaException
 
 from .kafka_config import consumer_config, producer_config
-from .modeller import Svar, Question, categoryInEnglish, TYPE_SVAR, TYPE_SPØRSMÅL
+from .modeller import Svar, Question, TYPE_SVAR, TYPE_SPØRSMÅL, TYPE_KORREKTUR
 
 
 class QuizRapid:
@@ -99,24 +99,41 @@ class QuizRapid:
         elif msg.error():
             raise KafkaException(msg.error())
 
-    def _handle_message(self, msg):
+    def _handle_question(self, msg):
+        self._last_message = msg
+
+        return Question(
+            category=msg["kategori"],
+            question=msg["spørsmål"],
+            answer_format=msg["svarformat"],
+            id=msg["spørsmålId"],
+            documentation=msg["dokumentasjon"],
+        )
+
+    def _handle_feedback(self, msg):
+        """Handles feedback from the consumer."""
+        if msg["lagnavn"] != self._team_name:
+            return
+
+        if msg["korrektur"] != "KORREKT":
+            print(f"❌ You answered incorrectly: id='{msg['spørsmålId']}' category='{msg['kategori']}'")
+            return
+
+        print(f"✅ You answered correctly: id='{msg['spørsmålId']}' category='{msg['kategori']}'")
+
+    def _handle_message(self, blob):
         """Handles messages from the consumer."""
         try:
-            msg = json.loads(msg.value().decode("utf-8"))
+            msg = json.loads(blob.value().decode("utf-8"))
         except JSONDecodeError as e:
-            print(f"error: could not decode message: {msg}, error: {e}")
+            print(f"error: could not decode message: {blob}, error: {e}")
             return
 
         try:
             if msg["@event_name"] == TYPE_SPØRSMÅL:
-                self._last_message = msg
-                return Question(
-                    category=categoryInEnglish(msg["kategori"]),
-                    question=msg["spørsmål"],
-                    answer_format=msg["svarformat"],
-                    id=msg["spørsmålId"],
-                    documentation=msg["dokumentasjon"],
-                )
+                return self._handle_question(msg)
+            elif msg["@event_name"] == TYPE_KORREKTUR:
+                self._handle_feedback(msg)
         except KeyError as e:
             print(f"error: unknown message: {msg}, missing key: {e}")
             return
@@ -136,7 +153,7 @@ class QuizRapid:
 
                 if msg["kategori"] not in self._ignored_categories:
                     print(
-                        f"📤 Published answer: category='{categoryInEnglish(msg['kategori'])}' answer='{svar}' teamName='{self._team_name}'"
+                        f"📤 Published answer: category='{msg['kategori']}' answer='{svar}' teamName='{self._team_name}'"
                     )
 
                 value = json.dumps(answer).encode("utf-8")

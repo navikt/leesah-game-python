@@ -73,13 +73,6 @@ class KvissRapid:
         self._producer: Producer = produsent
         self._consumer: Consumer = konsument
         self._ignorerte_kategorier = ignorerte_kategorier
-
-        try:
-            self._besvart_fil = open(".besvart", "r+", encoding="utf-8")
-            self._svar = self._besvart_fil.read().splitlines()
-        except Exception as e:
-            print("Feil ved åpning av fil:", e)
-
         print("🔍 Ser etter første spørsmål")
 
 
@@ -95,8 +88,6 @@ class KvissRapid:
             else:
                 spørsmål = self._håndter_melding(melding)
                 if spørsmål:
-                    if spørsmål.id in self._svar:
-                        continue
                     if spørsmål.kategori not in self._ignorerte_kategorier:
                         print(f"📥 Mottok spørsmål: {spørsmål}")
                     return spørsmål
@@ -122,7 +113,7 @@ class KvissRapid:
 
         try:
             if melding["@event_name"] == TYPE_SPØRSMÅL:
-                return self._håndter_spørsmål(melding)
+                return self._håndter_spørsmål(melding, TopicPartition(melding_blob.topic(), melding_blob.partition(), melding_blob.offset()))
             elif melding["@event_name"] == TYPE_KORREKTUR:
                 return self._håndter_korrektur(melding)
         except KeyError as e:
@@ -130,8 +121,10 @@ class KvissRapid:
 
         return None
 
-    def _håndter_spørsmål(self, melding):
+    def _håndter_spørsmål(self, melding, topicPartition):
         self._siste_melding = melding
+        self._siste_topicPartition = topicPartition
+
         return Spørsmål(
             kategori=melding["kategori"],
             spørsmål=melding["spørsmål"],
@@ -142,7 +135,7 @@ class KvissRapid:
 
     def _håndter_korrektur(self, melding):
         """Håndterer korrekturmeldinger."""
-        if melding["lagnavn"] != self._lagnavn or melding["spørsmålId"] in self._svar:
+        if melding["lagnavn"] != self._lagnavn: # or melding["spørsmålId"] in self._svar:
             return
 
         if melding["korrektur"] != "KORREKT":
@@ -150,8 +143,6 @@ class KvissRapid:
             return
 
         print(f"✅ Du svarte riktig på et spørsmål: id='{melding['spørsmålId']}' kategori='{melding['kategori']}'")
-        self._svar.append(melding["spørsmålId"])
-        self._besvart_fil.write(melding["spørsmålId"] + "\n")
 
     def publiser_svar(self, svar: str):
         """Publiserer et svar til stryket."""
@@ -190,7 +181,5 @@ class KvissRapid:
         """Avslutter kviss."""
         print("🛑 Stenger ned...")
         self.kjører = False
-        self._besvart_fil.close()
         self._producer.flush()
-        self._consumer.close()
         self._consumer.close()
