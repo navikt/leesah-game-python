@@ -2,7 +2,7 @@
 name = "leesah-game"
 version = "0.1.0"
 description = "Leesah er et Pythonbibliotek for å spille det hendelsedrevet applikasjonsutviklingspillet Leesah Game"
-authors = [{name = "NAV", email = ""}]
+authors = [{name = "Nav", email = "kyrre.havik@nav.no"}]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "leesah"}]
