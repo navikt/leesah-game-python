@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 TYPE_SPØRSMÅL = "SPØRSMÅL"
 TYPE_SVAR = "SVAR"
+TYPE_KORREKTUR = "KORREKTUR"
 
 
 class Svar(BaseModel):
