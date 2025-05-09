@@ -5,11 +5,13 @@ description = "Leesah er et Pythonbibliotek for å spille det hendelsedrevet app
 authors = [{name = "Nav", email = "kyrre.havik@nav.no"}]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "leesah"}]
-repository = "https://github.com/navikt/leesah-game-python"
 requires-python = ">=3.9"
 dependencies = [
     "confluent-kafka>=2.10.0",
     "pydantic>=2.11.4",
     "pyyaml>=6.0.2",
 ]
+
+[project.urls]
+Homepage = "https://leesah.io"
+Repository = "https://github.com/navikt/leesah-game-python.git"
