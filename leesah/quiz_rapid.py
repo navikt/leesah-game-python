@@ -84,8 +84,7 @@ class QuizRapid:
             else:
                 question = self._handle_message(msg)
                 if question:
-                    if question.category not in self._ignored_categories:
-                        print(f"📥 Received question: {question}")
+                    print(f"📥 Received question: {question}")
                     return question
 
     def _handle_error(self, msg):
@@ -129,6 +128,9 @@ class QuizRapid:
             print(f"error: could not decode message: {blob}, error: {e}")
             return
 
+        if "kategori" in msg and msg["kategori"] in self._ignored_categories:
+            return
+
         try:
             if msg["@event_name"] == TYPE_SPØRSMÅL:
                 return self._handle_question(msg)
@@ -151,10 +153,7 @@ class QuizRapid:
                 ).model_dump()
                 answer["@event_name"] = TYPE_SVAR
 
-                if msg["kategori"] not in self._ignored_categories:
-                    print(
-                        f"📤 Published answer: category='{msg['kategori']}' answer='{svar}' teamName='{self._team_name}'"
-                    )
+                print(f"📤 Published answer: category='{msg['kategori']}' answer='{svar}' teamName='{self._team_name}'")
 
                 value = json.dumps(answer).encode("utf-8")
                 self._producer.produce(topic=self._topic, value=value)

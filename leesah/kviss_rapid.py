@@ -111,6 +111,9 @@ class KvissRapid:
             print(f"feil: kunne ikke lese meldingen: {melding_blob.value()}, feil: {e}")
             return
 
+        if "kategori" in melding and melding["kategori"] not in self._ignorerte_kategorier:
+            return
+
         try:
             if melding["@event_name"] == TYPE_SPØRSMÅL:
                 return self._håndter_spørsmål(melding, TopicPartition(melding_blob.topic(), melding_blob.partition(), melding_blob.offset()))
@@ -158,10 +161,7 @@ class KvissRapid:
                 ).model_dump()
                 answer["@event_name"] = TYPE_SVAR
 
-                if melding["kategori"] not in self._ignorerte_kategorier:
-                    print(
-                        f"📤 Publisert svar: kategori='{melding['kategori']}' svar='{svar}' lagnavn='{self._lagnavn}'"
-                    )
+                print(f"📤 Publisert svar: kategori='{melding['kategori']}' svar='{svar}' lagnavn='{self._lagnavn}'")
 
                 value = json.dumps(answer).encode("utf-8")
                 self._producer.produce(topic=self._topic, value=value)
