@@ -116,7 +116,7 @@ class KvissRapid:
 
         try:
             if melding["@event_name"] == TYPE_SPØRSMÅL:
-                return self._håndter_spørsmål(melding, TopicPartition(melding_blob.topic(), melding_blob.partition(), melding_blob.offset()))
+                return self._håndter_spørsmål(melding)
             elif melding["@event_name"] == TYPE_KORREKTUR:
                 return self._håndter_korrektur(melding)
         except KeyError as e:
@@ -124,9 +124,8 @@ class KvissRapid:
 
         return None
 
-    def _håndter_spørsmål(self, melding, topicPartition):
+    def _håndter_spørsmål(self, melding):
         self._siste_melding = melding
-        self._siste_topicPartition = topicPartition
 
         return Spørsmål(
             kategori=melding["kategori"],
