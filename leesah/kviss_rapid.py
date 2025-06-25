@@ -111,7 +111,7 @@ class KvissRapid:
             print(f"feil: kunne ikke lese meldingen: {melding_blob.value()}, feil: {e}")
             return
 
-        if "kategori" in melding and melding["kategori"] not in self._ignorerte_kategorier:
+        if "kategori" in melding and melding["kategori"] in self._ignorerte_kategorier:
             return
 
         try:
